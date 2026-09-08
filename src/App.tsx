@@ -95,9 +95,13 @@ export default function App() {
   // Avatar click handler
   const handleAvatarClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Audio effect
-    const sfx = [sounds.slap, sounds.vineBoom, sounds.bruh, sounds.fart];
-    const pickSfx = sfx[Math.floor(Math.random() * sfx.length)];
-    pickSfx.call(sounds);
+    try {
+      const sfx = [sounds.slap, sounds.vineBoom, sounds.bruh, sounds.fart];
+      const pickSfx = sfx[Math.floor(Math.random() * sfx.length)];
+      pickSfx.call(sounds);
+    } catch {
+      // safe fallback
+    }
 
     // Screen Shake
     setIsShaking(true);
@@ -117,10 +121,13 @@ export default function App() {
       setIq((prev) => prev - 1);
     }
 
-    // Spawn floating text
+    // Spawn floating text safely with coordinate fallbacks
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left + (Math.random() * 40 - 20);
-    const y = e.clientY - rect.top - 20;
+    const x =
+      (e.clientX && e.clientX > 0 ? e.clientX - rect.left : rect.width / 2) +
+      (Math.random() * 40 - 20);
+    const y =
+      (e.clientY && e.clientY > 0 ? e.clientY - rect.top : rect.height / 2) - 20;
 
     const funnyWords = ['+ДОФАМИН!', 'СИГМА!', 'СКУФ УДАР!', 'КРИНЖ!', 'БАЗА!', 'АЛЬТУШКА!', 'ЧУШПАН!', 'РИЗЗ!'];
     const textLabel = combo > 5 && Math.random() > 0.5 
@@ -371,16 +378,16 @@ export default function App() {
             </div>
 
             {/* Click Instructions Tag */}
-            <div className="absolute top-3 px-3 py-1 rounded-full bg-black/60 border border-white/20 text-[11px] font-black tracking-widest text-amber-300 uppercase animate-pulse">
+            <div className="absolute top-3 px-3 py-1 rounded-full bg-black/60 border border-white/20 text-[11px] font-black tracking-widest text-amber-300 uppercase animate-pulse pointer-events-none">
               ТАПАЙ НЕ ДУМАЯ! КАЖДЫЙ ТАП СЖИГАЕТ МОЗГ!
             </div>
 
             {/* Large Reacting Emoji Character */}
-            <div className="relative text-7xl sm:text-8xl select-none transform transition-transform group-active:scale-90 group-hover:scale-105 filter drop-shadow-2xl">
+            <div className="relative text-7xl sm:text-8xl select-none transform transition-transform group-active:scale-90 group-hover:scale-105 filter drop-shadow-2xl pointer-events-none">
               {avatarVisuals[avatarMode].emoji}
             </div>
 
-            <div className="mt-3 text-center">
+            <div className="mt-3 text-center pointer-events-none">
               <h2 className="text-base sm:text-lg font-black text-white font-unbounded">
                 {avatarVisuals[avatarMode].name}
               </h2>
@@ -389,7 +396,7 @@ export default function App() {
 
             {/* Combo Streak pill */}
             {combo > 3 && (
-              <div className="absolute bottom-3 px-3 py-0.5 rounded-full bg-rose-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-rose-600/50 animate-bounce">
+              <div className="absolute bottom-3 px-3 py-0.5 rounded-full bg-rose-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-rose-600/50 animate-bounce pointer-events-none">
                 🔥 КОМБО: x{combo}!
               </div>
             )}
